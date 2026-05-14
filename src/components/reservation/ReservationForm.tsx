@@ -1,7 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { createReservationSupabase } from "../../services/supabaseClient";
-import { createReservationFirestore } from "../../services/firebaseClient";
 
 type FormValues = {
   name: string;
@@ -12,17 +10,29 @@ type FormValues = {
 };
 
 export default function ReservationForm() {
-  const { register, handleSubmit } = useForm<FormValues>({ defaultValues: { guests: 2 } });
+  const { register, handleSubmit, reset } = useForm<FormValues>({ defaultValues: { guests: 2 } });
+  const API = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
   const onSubmit = async (data: FormValues) => {
-    const payload = { ...data, created_at: new Date().toISOString() };
-    // Demo: write to both Supabase and Firestore (for demo/testing)
     try {
-      await createReservationSupabase(payload);
-    } catch (e) { console.warn("Supabase error", e); }
-    try {
-      await createReservationFirestore(payload);
-    } catch (e) { console.warn("Firestore error", e); }
-    alert("Reservation submitted (demo). Check Supabase / Firestore for persistence.");
+      const res = await fetch(`${API}/api/reservations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Reservation API error", err);
+        alert("Gagal mengirim reservasi. Cek konsol untuk detail.");
+        return;
+      }
+      const body = await res.json();
+      alert("Reservasi terkirim — ID: " + (body.id || "(unknown)"));
+      reset();
+    } catch (e) {
+      console.error(e);
+      alert("Gagal terhubung ke server reservasi. Pastikan server berjalan.");
+    }
   };
 
   return (
