@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --color-dark-brown: #2b1f16;
+  --color-warm-black: #0b0b0b;
+  --color-cream: #f7f0e6;
+  --color-gold: #c9a45a;
+  --color-amber: #ffb86b;
+}
+
+.bg-cream { background: var(--color-cream); }
+.text-foreground { color: var(--color-dark-brown); }
+
+.btn-primary {
+  @apply inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[var(--color-dark-brown)] text-white shadow-lg hover:brightness-105 transition;
+}
+.input {
+  @apply w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber;
+}
